@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+
+option java_multiple_files = true;
+option java_package = "generatedCode";
+option java_outer_classname = "TrendingMoviesGrpc";
+
+// Define the service
+service TrendingMovies {
+  rpc GetTopTrendingMovies(TrendingMoviesRequest) returns (TrendingMoviesResponse) {}
+}
+
+
+message TrendingMoviesRequest {
+}
+
+
+message TrendingMoviesResponse {
+
+  repeated MovieInfo movies = 1;
+}
+
+message MovieInfo {
+  string movieID = 1;
+  int32 rating = 2;
+}
