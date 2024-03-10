@@ -1,47 +1,72 @@
 package com.moviecatalogservice.resources;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import com.moviecatalogservice.generatedCode.TrendingMoviesGrpc;
-import com.moviecatalogservice.generatedCode.TrendingMoviesRequest;
-import com.moviecatalogservice.generatedCode.TrendingMoviesResponse;
+import com.moviecatalogservice.generated.*;
+import io.grpc.*;
+
+import java.util.concurrent.TimeUnit;
 
 public class MovieCatalogClient {
-    private final ManagedChannel channel;
+
     private final TrendingMoviesGrpc.TrendingMoviesBlockingStub blockingStub;
 
-    public TrendingMoviesClient(String host, int port) {
-        this(ManagedChannelBuilder.forAddress(host, port).usePlaintext());
-    }
-
-    private TrendingMoviesClient(ManagedChannelBuilder<?> channelBuilder) {
-        channel = channelBuilder.build();
+    public MovieCatalogClient(Channel channel) {
         blockingStub = TrendingMoviesGrpc.newBlockingStub(channel);
     }
 
-    public void shutdown() throws InterruptedException {
-        channel.shutdown().awaitTermination(5, java.util.concurrent.TimeUnit.SECONDS);
-    }
-
-    public TrendingMoviesResponse getTopTrendingMovies() {
+    public void getTrending() {
         TrendingMoviesRequest request = TrendingMoviesRequest.newBuilder().build();
-        return blockingStub.getTopTrendingMovies(request);
-    }
 
-    public static void main(String[] args) {
-        TrendingMoviesClient client = new TrendingMoviesClient("localhost", 50051); // Change host and port accordingly
+        TrendingMoviesResponse response;
         try {
-            TrendingMoviesResponse response = client.getTopTrendingMovies();
-            for (int i = 0; i < response.getMoviesCount(); i++) {
-                System.out.println("Movie ID: " + response.getMovies(i).getMovieID());
-                System.out.println("Rating: " + response.getMovies(i).getRating());
+            response = blockingStub.getTopTrendingMovies(request);
+            System.out.println("Received response from server:");
+            for (MovieInfo movie : response.getMoviesList()) {
+                System.out.println("Movie ID: " + movie.getMovieID());
+                System.out.println("Rating: " + movie.getRating());
+                System.out.println();
             }
-        } finally {
-            try {
-                client.shutdown();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        } catch (StatusRuntimeException e) {
+            throw e;
         }
+
     }
 }
+
+//    public void connection() {
+//
+//
+//        // Create a channel to the server
+//        System.out.println("Start Connection in client side");
+////        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8089)
+////                .usePlaintext()  // Use plaintext communication (for demonstration)
+////                .build();
+//
+//
+//        // Create a stub (client) for the TrendingMovies service
+//        TrendingMoviesGrpc.TrendingMoviesBlockingStub stub = TrendingMoviesGrpc.newBlockingStub(channel);
+//
+//        // Create a request message
+//        TrendingMoviesRequest request = TrendingMoviesRequest.newBuilder().build();
+//
+//        // Call the RPC and get the response
+//        TrendingMoviesResponse response = stub.getTopTrendingMovies(request);
+//
+//        System.out.println("Back :)))");
+//        // Print the response
+//        for (MovieInfo movie : response.getMoviesList()) {
+//            System.out.println("Movie ID: " + movie.getMovieID());
+//            System.out.println("Rating: " + movie.getRating());
+//            System.out.println();
+//        }
+//
+//        // Shutdown the channel
+//        channel.shutdown();
+//    }
+
+
+//
+//public static void Main(){
+//
+//
+//
+//}
