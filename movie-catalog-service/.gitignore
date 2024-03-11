@@ -5,7 +5,7 @@ target/
 !**/src/test/**/target/
 
 ### STS ###
-.apt_generated
+.apt_com.moviecatalogservice.com.moviecatalogservice.generated.generated.com.moviecatalogservice.generated.generated
 .classpath
 .factorypath
 .project
