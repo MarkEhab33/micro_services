@@ -3,31 +3,28 @@ package com.moviecatalogservice.resources;
 import com.moviecatalogservice.generated.*;
 import io.grpc.*;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MovieCatalogClient {
-
     private final TrendingMoviesGrpc.TrendingMoviesBlockingStub blockingStub;
-
     public MovieCatalogClient(Channel channel) {
         blockingStub = TrendingMoviesGrpc.newBlockingStub(channel);
     }
 
-    public void getTrending() {
+    public List<MovieInfo> getTrending() {
         TrendingMoviesRequest request = TrendingMoviesRequest.newBuilder().build();
-
         TrendingMoviesResponse response;
         try {
             response = blockingStub.getTopTrendingMovies(request);
             System.out.println("Received response from server:");
             for (MovieInfo movie : response.getMoviesList()) {
-                System.out.println("Movie ID: " + movie.getMovieID());
-                System.out.println("Rating: " + movie.getRating());
-                System.out.println();
+                System.out.println("Movie ID: " + movie.getMovieID() + "  Rating: " +movie.getRating() );
             }
         } catch (StatusRuntimeException e) {
             throw e;
         }
+        return response.getMoviesList();
 
     }
 }

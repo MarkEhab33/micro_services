@@ -1,6 +1,7 @@
 package com.moviecatalogservice.resources;
 
 
+import com.moviecatalogservice.generated.MovieInfo;
 import com.moviecatalogservice.models.CatalogItem;
 import com.moviecatalogservice.models.Movie;
 import com.moviecatalogservice.models.Rating;
@@ -62,19 +63,16 @@ public class MovieCatalogResource {
 
     @RequestMapping("/trending")
     public void getTrending() throws InterruptedException {
-
         System.out.println("In client server try to start connection");
+        String target = "localhost:9090";
 
-        String target = "localhost:8089";
-        ManagedChannel channel = Grpc.newChannelBuilder(target, InsecureChannelCredentials.create())
-                .build();
+        ManagedChannel channel = Grpc.newChannelBuilder(target, InsecureChannelCredentials.create()).build();
 
         try {
             MovieCatalogClient client = new MovieCatalogClient(channel);
-            client.getTrending();
+            List<MovieInfo> top10 = client.getTrending();
         }finally {
             channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
         }
-
     }
 }

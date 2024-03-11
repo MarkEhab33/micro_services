@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-
 option java_multiple_files = true;
 option java_package = "com.example.trendingservice.generated";
 option java_outer_classname = "TrendingGrpc";
@@ -10,13 +9,10 @@ service TrendingMovies {
   rpc GetTopTrendingMovies(TrendingMoviesRequest) returns (TrendingMoviesResponse) {}
 }
 
-
 message TrendingMoviesRequest {
 }
 
-
 message TrendingMoviesResponse {
-
   repeated MovieInfo movies = 1;
 }
 

@@ -22,21 +22,13 @@ public class RatingsResource{
 	
 	 @RequestMapping("/{userID}")
 	    public UserRating getRatingsOfUser(@PathVariable String userID) {
-	    		
-	    	System.out.println("Request wsl "+ userID);
-//	      List<Rating> ratings = Arrays.asList(
-//	                new Rating("550", 4)
-//	        );
-		 
 		  List<User_Ratings> ans = ratingRepository.findByUserID(userID);
-//		  
+
 		  List<Rating> ratings = new ArrayList();
-		  
 		  for(int i=0 ; i< ans.size();i++) {
 			  Rating r = new Rating(ans.get(i).getMovieID() , ans.get(i).getRating());
 			  ratings.add(r);
 		  }
-		  
 	      return new UserRating(ratings);
 	    }
 
