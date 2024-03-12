@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -62,17 +63,19 @@ public class MovieCatalogResource {
     }
 
     @RequestMapping("/trending")
-    public void getTrending() throws InterruptedException {
+    public List<CatalogItem> getTrending() throws InterruptedException {
         System.out.println("In client server try to start connection");
         String target = "localhost:9090";
+        List<CatalogItem> top10 ;
 
         ManagedChannel channel = Grpc.newChannelBuilder(target, InsecureChannelCredentials.create()).build();
 
         try {
             MovieCatalogClient client = new MovieCatalogClient(channel);
-            List<MovieInfo> top10 = client.getTrending();
+            top10 = client.getTrending(movieInfoService);
         }finally {
             channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
         }
+        return top10;
     }
 }

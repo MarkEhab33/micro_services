@@ -1,8 +1,12 @@
 package com.moviecatalogservice.resources;
 
 import com.moviecatalogservice.generated.*;
+import com.moviecatalogservice.models.CatalogItem;
+import com.moviecatalogservice.models.Rating;
+import com.moviecatalogservice.services.MovieInfoService;
 import io.grpc.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -12,19 +16,28 @@ public class MovieCatalogClient {
         blockingStub = TrendingMoviesGrpc.newBlockingStub(channel);
     }
 
-    public List<MovieInfo> getTrending() {
+
+
+    public List<CatalogItem> getTrending(MovieInfoService m) {
         TrendingMoviesRequest request = TrendingMoviesRequest.newBuilder().build();
         TrendingMoviesResponse response;
+        List <CatalogItem> trendingMovies = new ArrayList<>();
         try {
             response = blockingStub.getTopTrendingMovies(request);
+
             System.out.println("Received response from server:");
             for (MovieInfo movie : response.getMoviesList()) {
                 System.out.println("Movie ID: " + movie.getMovieID() + "  Rating: " +movie.getRating() );
+                Rating r = new Rating(movie.getMovieID() , movie.getRating());
+                CatalogItem c = m.getCatalogItem(r);
+                System.out.println(c.getName() + " " + c.getDescription() + " " + c.getRating());
+                trendingMovies.add(c);
+
             }
         } catch (StatusRuntimeException e) {
             throw e;
         }
-        return response.getMoviesList();
+        return trendingMovies;
 
     }
 }
